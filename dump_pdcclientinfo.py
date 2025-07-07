@@ -9,27 +9,23 @@ import idc
   
 
 def get_static_client_count(cfunc):
-    
-    global result_client_count
-    
-    result_client_count = 0
    
     class visitor(idaapi.ctree_visitor_t):
       
         def __init__(self, cfunc):
+            self.result_client_count = 0
             idaapi.ctree_visitor_t.__init__(self, idaapi.CV_FAST)
 
         def visit_expr(self, i):
-            global result_client_count
 
-            if result_client_count != 0:
+            if self.result_client_count != 0:
                 return 0
           
             if i.op == idaapi.cot_uge:
                 try:
                     if i.y.op == idaapi.cot_num:
                         print "cot_num found %X\r\n" % (i.y.n._value)
-                        result_client_count = i.y.n._value
+                        self.result_client_count = i.y.n._value
 
                 except Exception:
                     print "exception in visit_expr\r\n"
@@ -38,7 +34,7 @@ def get_static_client_count(cfunc):
    
     v = visitor(cfunc)
     v.apply_to(cfunc.body, None)
-    return result_client_count
+    return v.result_client_count
 
 
 def get_client_info_count():
