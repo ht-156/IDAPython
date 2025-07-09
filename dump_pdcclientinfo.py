@@ -21,7 +21,7 @@ def get_static_client_count(cfunc):
             if self.result_client_count != 0:
                 return 0
           
-            if i.op == idaapi.cot_uge:
+            if i.op == idaapi.cot_uge or i.op == idaapi.cot_ult:
                 try:
                     if i.y.op == idaapi.cot_num:
                         print "cot_num found %X\r\n" % (i.y.n._value)
